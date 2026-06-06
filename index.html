@@ -10,6 +10,7 @@
             --bg-color: #fab1a0;
             --tab-active: #2d3436;
             --tab-inactive: #dfe6e9;
+            --shuffle-color: #00b894;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -86,9 +87,11 @@
             color: white;
         }
 
-        /* Khu vực điều khiển lật tất cả */
+        /* Khu vực điều khiển lật tất cả & xáo trộn */
         .controls {
             margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
         }
         .control-btn {
             padding: 10px 25px;
@@ -99,10 +102,16 @@
             cursor: pointer;
             font-weight: bold;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
+            transition: transform 0.1s, background-color 0.2s;
         }
         .control-btn:active {
             transform: scale(0.95);
+        }
+        .control-btn.shuffle-btn {
+            background-color: var(--shuffle-color);
+        }
+        .control-btn.shuffle-btn.active {
+            background-color: #d63031; /* Đổi màu nút khi đang bật chế độ xáo trộn */
         }
 
         /* Container chứa các card */
@@ -233,13 +242,12 @@
 
     <div class="controls" id="control-panel">
         <button class="control-btn" onclick="flipAll()">Lật tất cả thẻ</button>
+        <button class="control-btn shuffle-btn" id="shuffle-btn" onclick="toggleShuffle()">Xáo trộn ôn tập</button>
     </div>
 
-    <div class="container" id="cards-container">
-        </div>
+    <div class="container" id="cards-container"></div>
 
-    <div class="info-panel" id="special-info-panel" style="display: none;">
-        </div>
+    <div class="info-panel" id="special-info-panel" style="display: none;"></div>
 
     <footer>Học tiếng Nhật mỗi ngày • Thẻ thông minh Kana</footer>
 
@@ -249,7 +257,7 @@
             hiragana: {
                 base: [
                     {k: "あ", r: "a"}, {k: "い", r: "i"}, {k: "う", r: "u"}, {k: "え", r: "e"}, {k: "お", r: "o"},
-                    {k: "か", r: "ka"}, {k: "き", r: "ki"}, {k: "く", r: "ku"}, {k: "け", r: "ke"}, {k: "こ", r: "ko"},
+                    {k: "か", r: "ka"}, {k: "き", r: "ki"}, {k: "く", r: "ku"}, {k: "ke", k: "け", r: "ke"}, {k: "こ", r: "ko"},
                     {k: "さ", r: "sa"}, {k: "し", r: "shi"}, {k: "す", r: "su"}, {k: "せ", r: "se"}, {k: "そ", r: "so"},
                     {k: "た", r: "ta"}, {k: "ち", r: "chi"}, {k: "つ", r: "tsu"}, {k: "て", r: "te"}, {k: "と", r: "to"},
                     {k: "な", r: "na"}, {k: "に", r: "ni"}, {k: "ぬ", r: "nu"}, {k: "ね", r: "ne"}, {k: "の", r: "no"},
@@ -270,7 +278,7 @@
                 yoon: [
                     {k: "きゃ", r: "kya"}, {k: "きゅ", r: "kyu"}, {k: "きょ", r: "kyo"},
                     {k: "しゃ", r: "sha"}, {k: "しゅ", r: "shu"}, {k: "しょ", r: "sho"},
-                    {k: "ちゃ", r: "cha"}, {k: "ちゅ", r: "chu"}, {k: "ちょ", r: "cho"},
+                    {k: "ちゃ", r: "cha"}, {k: "ちゅ", r: "chu"}, {k: "cho", k: "ちょ", r: "cho"},
                     {k: "にゃ", r: "nya"}, {k: "にゅ", r: "nyu"}, {k: "にょ", r: "nyo"},
                     {k: "ひゃ", r: "hya"}, {k: "ひゅ", r: "hyu"}, {k: "ひょ", r: "hyo"},
                     {k: "みゃ", r: "mya"}, {k: "みゅ", r: "myu"}, {k: "みょ", r: "myo"},
@@ -314,8 +322,8 @@
                 ],
                 dakuon: [
                     {k: "ガ", r: "ga"}, {k: "ギ", r: "gi"}, {k: "グ", r: "gu"}, {k: "ゲ", r: "ge"}, {k: "ゴ", r: "go"},
-                    {k: "ザ", r: "za"}, {k: "ジ", r: "ji"}, {k: "ズ", r: "zu"}, {k: "ゼ", r: "ze"}, {k: "ゾ", r: "zo"},
-                    {k: "ダ", r: "da"}, {k: "ヂ", r: "ji/di"}, {k: "ヅ", r: "zu/du"}, {k: "デ", r: "de"}, {k: "ド", r: "do"},
+                    {k: "ざ", r: "za"}, {k: "ジ", r: "ji"}, {k: "ズ", r: "zu"}, {k: "ゼ", r: "ze"}, {k: "ゾ", r: "zo"},
+                    {k: "ダ", r: "da"}, {k: "ヂ", r: "ji/di"}, {k: "づ", r: "zu/du"}, {k: "デ", r: "de"}, {k: "ド", r: "do"},
                     {k: "バ", r: "ba"}, {k: "ビ", r: "bi"}, {k: "ブ", r: "bu"}, {k: "ベ", r: "be"}, {k: "ボ", r: "bo"},
                     {k: "パ", r: "pa"}, {k: "ピ", r: "pi"}, {k: "プ", r: "pu"}, {k: "ペ", r: "pe"}, {k: "ポ", r: "po"}
                 ],
@@ -326,11 +334,11 @@
                     {k: "ニャ", r: "nya"}, {k: "ニュ", r: "nyu"}, {k: "ニョ", r: "nyo"},
                     {k: "ヒゃ", r: "hya"}, {k: "ヒュ", r: "hyu"}, {k: "ヒョ", r: "hyo"},
                     {k: "ミャ", r: "mya"}, {k: "ミュ", r: "myu"}, {k: "ミョ", r: "myo"},
-                    {k: "リャ", r: "rya"}, {k: "リュ", r: "ryu"}, {k: "リょ", r: "ryo"},
+                    {k: "リゃ", r: "rya"}, {k: "リュ", r: "ryu"}, {k: "リょ", r: "ryo"},
                     {k: "ギャ", r: "gya"}, {k: "ギュ", r: "gyu"}, {k: "ギョ", r: "gyo"},
                     {k: "ジャ", r: "ja"}, {k: "ジュ", r: "ju"}, {k: "ジョ", r: "jo"},
-                    {k: "ビャ", r: "bya"}, {k: "ビュ", r: "byu"}, {k: "ビョ", r: "byo"},
-                    {k: "ピャ", r: "pya"}, {k: "ピュ", r: "pyu"}, {k: "ピョ", r: "pyo"}
+                    {k: "ビゃ", r: "bya"}, {k: "ビュ", r: "byu"}, {k: "ビョ", r: "byo"},
+                    {k: "ピャ", r: "pya"}, {k: "ピュ", r: "pyu"}, {k: "ピョ", r: "po"}
                 ],
                 rules: `
                     <h3>1. Âm Ngắt (Sokuon) - Katakana</h3>
@@ -353,15 +361,16 @@
         // Trạng thái hiện tại của ứng dụng
         let currentMainTab = 'hiragana';
         let currentSubTab = 'base';
+        let isShuffled = false; // Trạng thái kiểm tra xem có đang xáo trộn hay không
 
         // Hàm thay đổi Tab lớn (Hiragana / Katakana)
         function setMainTab(tab) {
             currentMainTab = tab;
-            // Cập nhật giao diện nút bấm
+            isShuffled = false; // Tự động reset trạng thái xáo trộn khi đổi tab lớn
+            
             document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             
-            // Đổi màu chủ đạo tùy theo bảng để dễ phân biệt (Tùy chọn thẩm mỹ)
             if(tab === 'katakana') {
                 document.documentElement.style.setProperty('--primary-color', '#0984e3');
                 document.documentElement.style.setProperty('--bg-color', '#74b9ff');
@@ -376,9 +385,26 @@
         // Hàm thay đổi Tab nhỏ (Cơ bản / Đục / Ghép / Lý thuyết)
         function setSubTab(tab) {
             currentSubTab = tab;
+            isShuffled = false; // Tự động reset trạng thái xáo trộn khi đổi tab nhỏ
             document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             render();
+        }
+
+        // Hàm bật/tắt chức năng Xáo trộn ôn tập
+        function toggleShuffle() {
+            isShuffled = !isShuffled;
+            render();
+        }
+
+        // Hàm xáo trộn mảng ngẫu nhiên (Fisher-Yates Shuffle Algorithm)
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
         }
 
         // Hàm lật từng thẻ khi click vào
@@ -405,7 +431,17 @@
             const container = document.getElementById('cards-container');
             const infoPanel = document.getElementById('special-info-panel');
             const controlPanel = document.getElementById('control-panel');
+            const shuffleBtn = document.getElementById('shuffle-btn');
             
+            // Cập nhật trạng thái hiển thị của nút xáo trộn
+            if (isShuffled) {
+                shuffleBtn.textContent = "Hủy xáo trộn (Bình thường)";
+                shuffleBtn.classList.add('active');
+            } else {
+                shuffleBtn.textContent = "Xáo trộn ôn tập";
+                shuffleBtn.classList.remove('active');
+            }
+
             // Nếu là tab lý thuyết âm ngắt âm dài
             if (currentSubTab === 'rules') {
                 container.style.display = 'none';
@@ -417,14 +453,21 @@
 
             // Nếu là các tab thẻ chữ cái thông thường
             container.style.display = 'grid';
-            controlPanel.style.display = 'block';
+            controlPanel.style.display = 'flex';
             infoPanel.style.display = 'none';
             container.innerHTML = '';
 
-            const listData = data[currentMainTab][currentSubTab];
+            let listData = data[currentMainTab][currentSubTab];
+
+            // Nếu kích hoạt chế độ xáo trộn ôn tập
+            if (isShuffled) {
+                // Lọc bỏ những phần tử rỗng trước khi xáo trộn để thẻ hiển thị khít nhau liên tục
+                const filteredData = listData.filter(item => item.k !== "");
+                listData = shuffleArray(filteredData);
+            }
 
             listData.forEach(item => {
-                // Tạo khoảng trống cho bảng chữ cái Seion vuông vắn (các ô trống hàng Ya/Wa)
+                // Tạo khoảng trống cho bảng chữ cái Seion vuông vắn (chỉ áp dụng ở chế độ bình thường)
                 if (item.k === "") {
                     const emptyDiv = document.createElement('div');
                     emptyDiv.style.visibility = 'hidden';
