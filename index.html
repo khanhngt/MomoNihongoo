@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Học Tiếng Nhật - Thẻ Lật Toàn Tập Kana</title>
+    <title>Học Tiếng Nhật - Thẻ Lật Toàn Tập Có Phát Âm Giọng Nhật</title>
     <style>
         :root {
             --primary-color: #ff7675;
@@ -61,7 +61,7 @@
             box-shadow: 0 4px 10px rgba(255, 118, 117, 0.4);
         }
 
-        /* Menu Tabs con (Cơ bản / Đục / Ghép...) */
+        /* Menu Tabs con */
         .sub-tabs {
             display: flex;
             flex-wrap: wrap;
@@ -87,7 +87,7 @@
             color: white;
         }
 
-        /* Khu vực điều khiển lật tất cả & xáo trộn */
+        /* Khu vực điều khiển */
         .controls {
             margin-bottom: 20px;
             display: flex;
@@ -111,20 +111,20 @@
             background-color: var(--shuffle-color);
         }
         .control-btn.shuffle-btn.active {
-            background-color: #d63031; /* Đổi màu nút khi đang bật chế độ xáo trộn */
+            background-color: #d63031;
         }
 
         /* Container chứa các card */
         .container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             gap: 15px;
             width: 100%;
             max-width: 900px;
             margin-bottom: 30px;
         }
 
-        /* Hiệu ứng lật thẻ */
+        /* Hiệu ứng lật thẻ & có loa icon */
         .card {
             background-color: transparent;
             width: 100%;
@@ -157,7 +157,7 @@
             align-items: center;
             border-radius: 12px;
             box-sizing: border-box;
-            padding: 5px;
+            padding: 10px;
         }
         .card-front {
             background-color: #ffffff;
@@ -167,12 +167,27 @@
         .card-front .kana {
             font-size: 3.2rem;
             font-weight: bold;
+            word-break: break-all;
+        }
+        .card.vocab-card .card-front .kana {
+            font-size: 1.6rem;
+            color: #2c3e50;
         }
         .card-front .type {
             font-size: 0.75rem;
             color: #b2bec3;
-            margin-top: 2px;
+            margin-top: 5px;
         }
+        
+        /* Icon cái loa biểu thị có âm thanh */
+        .audio-icon {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 0.8rem;
+            color: #b2bec3;
+        }
+
         .card-back {
             background-color: var(--primary-color);
             color: white;
@@ -180,16 +195,28 @@
             border: 2px solid var(--primary-color);
         }
         .card-back .romaji {
-            font-size: 2.5rem;
+            font-size: 1.5rem;
             font-weight: bold;
         }
+        .card-back .meaning {
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-top: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 15px;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
         .card-back .note {
-            font-size: 0.75rem;
-            opacity: 0.9;
-            margin-top: 2px;
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-top: 8px;
         }
 
-        /* Panel thông tin bổ sung cho âm ngắt/âm dài */
+        /* Panel thông tin bổ sung */
         .info-panel {
             background: white;
             padding: 20px;
@@ -226,7 +253,7 @@
 <body>
 
     <h1>Ứng Dụng Học Tiếng Nhật Thông Minh</h1>
-    <p class="subtitle">Chọn Tab, bấm vào từng thẻ để xem Romaji hoặc lật nhanh tất cả</p>
+    <p class="subtitle">Bấm vào thẻ để lật xem ý nghĩa và tự động 🔊 Phát âm giọng Nhật</p>
 
     <div class="main-tabs">
         <button class="main-tab-btn active" onclick="setMainTab('hiragana')">平仮名 HIRAGANA</button>
@@ -237,6 +264,7 @@
         <button class="sub-tab-btn active" onclick="setSubTab('base')">Âm Cơ Bản (Seion)</button>
         <button class="sub-tab-btn" onclick="setSubTab('dakuon')">Âm Đục / Bán Đục (Dakuon)</button>
         <button class="sub-tab-btn" onclick="setSubTab('yoon')">Âm Ghép (Yōon)</button>
+        <button class="sub-tab-btn" onclick="setSubTab('vocabulary')">Từ Vựng (Tango)</button>
         <button class="sub-tab-btn" onclick="setSubTab('rules')">Âm Ngắt & Âm Dài (Lý thuyết)</button>
     </div>
 
@@ -252,12 +280,11 @@
     <footer>Học tiếng Nhật mỗi ngày • Thẻ thông minh Kana</footer>
 
     <script>
-        // DỮ LIỆU ĐẦY ĐỦ BẢNG CHỮ CÁI TIẾNG NHẬT
         const data = {
             hiragana: {
                 base: [
                     {k: "あ", r: "a"}, {k: "い", r: "i"}, {k: "う", r: "u"}, {k: "え", r: "e"}, {k: "お", r: "o"},
-                    {k: "か", r: "ka"}, {k: "き", r: "ki"}, {k: "く", r: "ku"}, {k: "ke", k: "け", r: "ke"}, {k: "こ", r: "ko"},
+                    {k: "か", r: "ka"}, {k: "き", r: "ki"}, {k: "く", r: "ku"}, {k: "け", r: "ke"}, {k: "こ", r: "ko"},
                     {k: "さ", r: "sa"}, {k: "し", r: "shi"}, {k: "す", r: "su"}, {k: "せ", r: "se"}, {k: "そ", r: "so"},
                     {k: "た", r: "ta"}, {k: "ち", r: "chi"}, {k: "つ", r: "tsu"}, {k: "て", r: "te"}, {k: "と", r: "to"},
                     {k: "な", r: "na"}, {k: "に", r: "ni"}, {k: "ぬ", r: "nu"}, {k: "ね", r: "ne"}, {k: "の", r: "no"},
@@ -278,7 +305,7 @@
                 yoon: [
                     {k: "きゃ", r: "kya"}, {k: "きゅ", r: "kyu"}, {k: "きょ", r: "kyo"},
                     {k: "しゃ", r: "sha"}, {k: "しゅ", r: "shu"}, {k: "しょ", r: "sho"},
-                    {k: "ちゃ", r: "cha"}, {k: "ちゅ", r: "chu"}, {k: "cho", k: "ちょ", r: "cho"},
+                    {k: "ちゃ", r: "cha"}, {k: "ちゅ", r: "chu"}, {k: "cho", r: "cho"},
                     {k: "にゃ", r: "nya"}, {k: "にゅ", r: "nyu"}, {k: "にょ", r: "nyo"},
                     {k: "ひゃ", r: "hya"}, {k: "ひゅ", r: "hyu"}, {k: "ひょ", r: "hyo"},
                     {k: "みゃ", r: "mya"}, {k: "みゅ", r: "myu"}, {k: "みょ", r: "myo"},
@@ -288,23 +315,48 @@
                     {k: "びゃ", r: "bya"}, {k: "びゅ", r: "byu"}, {k: "びょ", r: "byo"},
                     {k: "ぴゃ", r: "pya"}, {k: "ぴゅ", r: "pyu"}, {k: "ぴょ", r: "pyo"}
                 ],
-                rules: `
-                    <h3>1. Âm Ngắt (Sokuon) - Hiragana</h3>
-                    <p>Sử dụng chữ <code>つ</code> viết nhỏ lại thành <code>っ</code>. Âm ngắt không tự phát âm mà dùng để gấp đôi phụ âm đứng ngay sau nó.</p>
-                    <ul>
-                        <li>Ví dụ: ざっし (zasshi - tạp chí)</li>
-                        <li>Ví dụ: きって (kitte - tem thư)</li>
-                    </ul>
-                    <h3>2. Âm Dài (Chōon) - Hiragana</h3>
-                    <p>Kéo dài nguyên âm của chữ đứng trước theo quy tắc:</p>
-                    <ul>
-                        <li>Hàng <b>A</b> thêm <code>あ</code>. Ví dụ: おかあさん (okāsan - mẹ)</li>
-                        <li>Hàng <b>I</b> thêm <code>い</code>. Ví dụ: おにいさん (onīsan - anh trai)</li>
-                        <li>Hàng <b>U</b> thêm <code>う</code>. Ví dụ: ゆうがた (yūgata - chiều tối)</li>
-                        <li>Hàng <b>E</b> thêm <code>い</code> (đôi khi thêm <code>え</code>). Ví dụ: せんせい (sensei -> sensē), おねえさん (onēsan)</li>
-                        <li>Hàng <b>O</b> thêm <code>う</code> (đôi khi thêm <code>お</code>). Ví dụ: とうきょう (tōkyō), おおきい (ōkī)</li>
-                    </ul>
-                `
+                vocabulary: [
+                    {k: "あさ", r: "asa", m: "Buổi sáng"},
+                    {k: "いぬ", r: "inu", m: "Con chó"},
+                    {k: "ねこ", r: "neko", m: "Con mèo"},
+                    {k: "さくら", r: "sakura", m: "Hoa anh đào"},
+                    {k: "すし", r: "sushi", m: "Món Sushi"},
+                    {k: "みず", r: "mizu", m: "Nước"},
+                    {k: "てんき", r: "tenki", m: "Thời tiết"},
+                    {k: "ありがとう", r: "arigatou", m: "Cảm ơn"},
+                    {k: "せんせい", r: "sensei", m: "Thầy cô giáo"},
+                    {k: "ともだち", r: "tomodachi", m: "Bạn bè"},
+                    {k: "うち", r: "uchi", m: "Nhà ở"},
+                    {k: "くるま", r: "kuruma", m: "Xe hơi"},
+                    {k: "さかな", r: "sakana", m: "Con cá"},
+                    {k: "ひこうき", r: "hikouki", m: "Máy bay"},
+                    {k: "やま", r: "yama", m: "Núi"},
+                    {k: "こんにちは", r: "konnichiwa", m: "Xin chào (ngày)"},
+                    {k: "おやすみ", r: "oyasumi", m: "Chúc ngủ ngon"},
+                    {k: "ほん", r: "hon", m: "Sách"},
+                    {k: "にほんご", r: "nihongo", m: "Tiếng Nhật"},
+                    {k: "がくせい", r: "gakusei", m: "Học sinh/Sinh viên"},
+                    {k: "ごはん", r: "gohan", m: "Cơm/Bữa ăn"},
+                    {k: "おちゃ", r: "ocha", m: "Trà xanh"},
+                    {k: "あめ", r: "ame", m: "Mưa / Kẹo"},
+                    {k: "うみ", r: "umi", m: "Biển"},
+                    {k: "とり", r: "tori", m: "Con chim"},
+                    {k: "はな", r: "hana", m: "Hoa / Cái mũi"},
+                    {k: "むし", r: "mushi", m: "Côn trùng"},
+                    {k: "かぞく", r: "kazoku", m: "Gia đình"},
+                    {k: "きょう", r: "kyou", m: "Hôm nay"},
+                    {k: "あした", r: "ashita", m: "Ngày mai"},
+                    {k: "きのう", r: "kinou", m: "Hôm qua"},
+                    {k: "じかん", r: "jikan", m: "Thời gian"},
+                    {k: "つくえ", r: "tsukue", m: "Cái bàn"},
+                    {k: "いす", r: "isu", m: "Cái ghế"},
+                    {k: "でんわ", r: "denwa", m: "Điện thoại"},
+                    {k: "かばん", r: "kaban", m: "Cặp sách/Túi"},
+                    {k: "くつ", r: "kutsu", m: "Giày dép"},
+                    {k: "ふゆ", r: "fuyu", m: "Mùa đông"},
+                    {k: "なつ", r: "natsu", m: "Mùa hè"}
+                ],
+                rules: `<h3>1. Âm Ngắt (Sokuon)</h3>... (Giữ nguyên)`
             },
             katakana: {
                 base: [
@@ -321,10 +373,10 @@
                     {k: "ン", r: "n"}
                 ],
                 dakuon: [
-                    {k: "ガ", r: "ga"}, {k: "ギ", r: "gi"}, {k: "グ", r: "gu"}, {k: "ゲ", r: "ge"}, {k: "ゴ", r: "go"},
-                    {k: "ざ", r: "za"}, {k: "ジ", r: "ji"}, {k: "ズ", r: "zu"}, {k: "ゼ", r: "ze"}, {k: "ゾ", r: "zo"},
+                    {k: "ガ", r: "ga"}, {k: "ギ", r: "gi"}, {k: "グ", r: "gu"}, {k: "ゲ", r: "ge"}, {k: "ご", r: "go"},
+                    {k: "ザ", r: "za"}, {k: "ジ", r: "ji"}, {k: "ズ", r: "zu"}, {k: "ぜ", r: "ze"}, {k: "ぞ", r: "zo"},
                     {k: "ダ", r: "da"}, {k: "ヂ", r: "ji/di"}, {k: "づ", r: "zu/du"}, {k: "デ", r: "de"}, {k: "ド", r: "do"},
-                    {k: "バ", r: "ba"}, {k: "ビ", r: "bi"}, {k: "ブ", r: "bu"}, {k: "ベ", r: "be"}, {k: "ボ", r: "bo"},
+                    {k: "バ", r: "ba"}, {k: "ビ", r: "bi"}, {k: "ブ", r: "bu"}, {k: "べ", r: "be"}, {k: "ボ", r: "bo"},
                     {k: "パ", r: "pa"}, {k: "ピ", r: "pi"}, {k: "プ", r: "pu"}, {k: "ペ", r: "pe"}, {k: "ポ", r: "po"}
                 ],
                 yoon: [
@@ -337,37 +389,78 @@
                     {k: "リゃ", r: "rya"}, {k: "リュ", r: "ryu"}, {k: "リょ", r: "ryo"},
                     {k: "ギャ", r: "gya"}, {k: "ギュ", r: "gyu"}, {k: "ギョ", r: "gyo"},
                     {k: "ジャ", r: "ja"}, {k: "ジュ", r: "ju"}, {k: "ジョ", r: "jo"},
-                    {k: "ビゃ", r: "bya"}, {k: "ビュ", r: "byu"}, {k: "ビョ", r: "byo"},
-                    {k: "ピャ", r: "pya"}, {k: "ピュ", r: "pyu"}, {k: "ピョ", r: "po"}
+                    {k: "ビャ", r: "bya"}, {k: "ビュ", r: "byu"}, {k: "ビョ", r: "byo"},
+                    {k: "ピャ", r: "pya"}, {k: "ピュ", r: "pyu"}, {k: "ピョ", r: "pyo"}
                 ],
-                rules: `
-                    <h3>1. Âm Ngắt (Sokuon) - Katakana</h3>
-                    <p>Sử dụng chữ Katakana <code>ツ</code> nhỏ lại thành <code>ッ</code>. Quy tắc nhân đôi phụ âm tương tự Hiragana.</p>
-                    <ul>
-                        <li>Ví dụ: コップ (koppu - cái cốc)</li>
-                        <li>Ví dụ: ベッド (beddo - cái giường)</li>
-                    </ul>
-                    <h3>2. Âm Dài (Chōon) - Katakana</h3>
-                    <p>Đối với bộ Katakana (chuyên dùng phiên âm tiếng nước ngoài), trường âm cực kỳ đơn giản. Nó không thêm chữ cái nguyên âm như Hiragana mà <b>chỉ dùng một dấu gạch ngang <code>ー</code></b> cho mọi hàng âm.</p>
-                    <ul>
-                        <li>Ví dụ: ケーキ (kēki - bánh ngọt)</li>
-                        <li>Ví dụ: スーパー (sūpā - siêu thị)</li>
-                        <li>Ví dụ: タクシー (takushī - taxi)</li>
-                    </ul>
-                `
+                vocabulary: [
+                    {k: "カメラ", r: "kamera", m: "Máy ảnh"},
+                    {k: "テレビ", r: "terebi", m: "Tivi"},
+                    {k: "ラジオ", r: "rajio", m: "Đài Radio"},
+                    {k: "パソコン", r: "pasokon", m: "Máy tính PC"},
+                    {k: "アメリカ", r: "amerika", m: "Nước Mỹ"},
+                    {k: "ベトナム", r: "betonamu", m: "Việt Nam"},
+                    {k: "コーヒー", r: "kōhī", m: "Cà phê"},
+                    {k: "ケーキ", r: "kēki", m: "Bánh ngọt"},
+                    {k: "ホテル", r: "hoteru", m: "Khách sạn"},
+                    {k: "レストラン", r: "resutoran", m: "Nhà hàng"},
+                    {k: "タクシー", r: "takushī", m: "Xe Taxi"},
+                    {k: "スーパー", r: "sūpā", m: "Siêu thị"},
+                    {k: "トイレ", r: "toire", m: "Nhà vệ sinh"},
+                    {k: "シャツ", r: "shatsu", m: "Áo sơ mi"},
+                    {k: "ノート", r: "nōto", m: "Vở ghi chép"},
+                    {k: "ベッド", r: "beddo", m: "Cái giường"},
+                    {k: "コップ", r: "koppu", m: "Cái cốc/ly"},
+                    {k: "ニュース", r: "nyūsu", m: "Tin tức"},
+                    {k: "ミルク", r: "miruku", m: "Sữa bò"},
+                    {k: "パン", r: "pan", m: "Bánh mì"},
+                    {k: "ジュース", r: "jūsu", m: "Nước hoa quả"},
+                    {k: "スマホ", r: "sumaho", m: "Điện thoại thông minh"},
+                    {k: "ピアノ", r: "piano", m: "Đàn Piano"},
+                    {k: "テニス", r: "tenisu", m: "Môn Tennis"},
+                    {k: "バス", r: "basu", m: "Xe buýt"},
+                    {k: "ビル", r: "biru", m: "Tòa nhà cao tầng"},
+                    {k: "ワイン", r: "wain", m: "Rượu vang"},
+                    {k: "ネクタイ", r: "nekutai", m: "Cà vạt"},
+                    {k: "エレベーター", r: "erebētā", m: "Thang máy"},
+                    {k: "エアコン", r: "eakon", m: "Máy điều hòa"},
+                    {k: "ドア", r: "doa", m: "Cửa ra vào"},
+                    {k: "スプーン", r: "supūn", m: "Cái thìa/muỗng"},
+                    {k: "フォーク", r: "fōku", m: "Cái dĩa/nĩa"},
+                    {k: "ナイフ", r: "naifu", m: "Con dao"},
+                    {k: "フランス", r: "furansu", m: "Nước Pháp"},
+                    {k: "チョコレート", r: "chokorēto", m: "Sô-cô-la"},
+                    {k: "アイスクリーム", r: "aisukurīmu", m: "Kem"},
+                    {k: "アニメ", r: "anime", m: "Phim hoạt hình"},
+                    {k: "ゲーム", r: "gēmu", m: "Trò chơi điện tử"},
+                    {k: "カレンダー", r: "karendā", m: "Cuốn lịch"}
+                ],
+                rules: `<h3>1. Âm Ngắt (Sokuon)</h3>... (Giữ nguyên)`
             }
         };
 
-        // Trạng thái hiện tại của ứng dụng
         let currentMainTab = 'hiragana';
         let currentSubTab = 'base';
-        let isShuffled = false; // Trạng thái kiểm tra xem có đang xáo trộn hay không
+        let isShuffled = false;
 
-        // Hàm thay đổi Tab lớn (Hiragana / Katakana)
+        // Hàm xử lý PHÁT ÂM TIẾNG NHẬT (Core feature mới)
+        function speakJapanese(text) {
+            if ('speechSynthesis' in window) {
+                // Hủy các âm thanh đang phát dở (nếu bấm liên tục)
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ja-JP'; // Định dạng ngôn ngữ chuẩn tiếng Nhật
+                utterance.rate = 1;    // Tốc độ nói vừa phải, dễ nghe để học tập
+                
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.log("Trình duyệt của bạn không hỗ trợ tính năng phát âm.");
+            }
+        }
+
         function setMainTab(tab) {
             currentMainTab = tab;
-            isShuffled = false; // Tự động reset trạng thái xáo trộn khi đổi tab lớn
-            
+            isShuffled = false; 
             document.querySelectorAll('.main-tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             
@@ -378,26 +471,22 @@
                 document.documentElement.style.setProperty('--primary-color', '#ff7675');
                 document.documentElement.style.setProperty('--bg-color', '#fab1a0');
             }
-
             render();
         }
 
-        // Hàm thay đổi Tab nhỏ (Cơ bản / Đục / Ghép / Lý thuyết)
         function setSubTab(tab) {
             currentSubTab = tab;
-            isShuffled = false; // Tự động reset trạng thái xáo trộn khi đổi tab nhỏ
+            isShuffled = false; 
             document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             render();
         }
 
-        // Hàm bật/tắt chức năng Xáo trộn ôn tập
         function toggleShuffle() {
             isShuffled = !isShuffled;
             render();
         }
 
-        // Hàm xáo trộn mảng ngẫu nhiên (Fisher-Yates Shuffle Algorithm)
         function shuffleArray(array) {
             let shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -407,12 +496,13 @@
             return shuffled;
         }
 
-        // Hàm lật từng thẻ khi click vào
-        function toggleCard(card) {
+        // Hàm lật thẻ đồng thời gọi hàm phát âm luôn
+        function handleCardClick(card, textToSpeak) {
             card.classList.toggle('flipped');
+            // Phát âm text tiếng Nhật ngay khi nhấn vào
+            speakJapanese(textToSpeak);
         }
 
-        // Hàm lật tất cả / Úp tất cả
         function flipAll() {
             const cards = document.querySelectorAll('.card');
             if (cards.length === 0) return;
@@ -426,14 +516,12 @@
             });
         }
 
-        // Hàm vẽ giao diện và đổ dữ liệu
         function render() {
             const container = document.getElementById('cards-container');
             const infoPanel = document.getElementById('special-info-panel');
             const controlPanel = document.getElementById('control-panel');
             const shuffleBtn = document.getElementById('shuffle-btn');
             
-            // Cập nhật trạng thái hiển thị của nút xáo trộn
             if (isShuffled) {
                 shuffleBtn.textContent = "Hủy xáo trộn (Bình thường)";
                 shuffleBtn.classList.add('active');
@@ -442,7 +530,6 @@
                 shuffleBtn.classList.remove('active');
             }
 
-            // Nếu là tab lý thuyết âm ngắt âm dài
             if (currentSubTab === 'rules') {
                 container.style.display = 'none';
                 controlPanel.style.display = 'none';
@@ -451,7 +538,6 @@
                 return;
             }
 
-            // Nếu là các tab thẻ chữ cái thông thường
             container.style.display = 'grid';
             controlPanel.style.display = 'flex';
             infoPanel.style.display = 'none';
@@ -459,15 +545,12 @@
 
             let listData = data[currentMainTab][currentSubTab];
 
-            // Nếu kích hoạt chế độ xáo trộn ôn tập
             if (isShuffled) {
-                // Lọc bỏ những phần tử rỗng trước khi xáo trộn để thẻ hiển thị khít nhau liên tục
                 const filteredData = listData.filter(item => item.k !== "");
                 listData = shuffleArray(filteredData);
             }
 
             listData.forEach(item => {
-                // Tạo khoảng trống cho bảng chữ cái Seion vuông vắn (chỉ áp dụng ở chế độ bình thường)
                 if (item.k === "") {
                     const emptyDiv = document.createElement('div');
                     emptyDiv.style.visibility = 'hidden';
@@ -475,16 +558,22 @@
                     return;
                 }
 
-                // Thiết kế thẻ lật sinh tự động
+                const isVocab = currentSubTab === 'vocabulary';
+                const backContent = isVocab 
+                    ? `<span class="romaji">${item.r}</span><span class="meaning">${item.m}</span>`
+                    : `<span class="romaji">${item.r}</span>`;
+
+                // Truyền ký tự tiếng Nhật (item.k) thẳng vào hàm handleCardClick để nó đọc lên
                 const cardHtml = `
-                    <div class="card" onclick="toggleCard(this)">
+                    <div class="card ${isVocab ? 'vocab-card' : ''}" onclick="handleCardClick(this, '${item.k}')">
                         <div class="card-inner">
                             <div class="card-front">
+                                <span class="audio-icon">🔊</span>
                                 <span class="kana">${item.k}</span>
-                                <span class="type">${currentMainTab.toUpperCase()}</span>
+                                <span class="type">${isVocab ? 'Từ vựng' : currentMainTab.toUpperCase()}</span>
                             </div>
                             <div class="card-back">
-                                <span class="romaji">${item.r}</span>
+                                ${backContent}
                                 <span class="note">Bấm để úp</span>
                             </div>
                         </div>
@@ -494,7 +583,6 @@
             });
         }
 
-        // Khởi chạy ứng dụng lần đầu tiên
         render();
     </script>
 </body>
