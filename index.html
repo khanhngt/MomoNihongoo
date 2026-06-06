@@ -450,7 +450,7 @@
                 
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'ja-JP'; // Định dạng ngôn ngữ chuẩn tiếng Nhật
-                utterance.rate = 1;    // Tốc độ nói vừa phải, dễ nghe để học tập
+                utterance.rate = 0.7;    // Tốc độ nói vừa phải, dễ nghe để học tập
                 
                 window.speechSynthesis.speak(utterance);
             } else {
